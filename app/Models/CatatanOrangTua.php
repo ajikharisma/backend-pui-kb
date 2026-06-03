@@ -13,7 +13,7 @@ class CatatanOrangTua extends Model
 
     protected $fillable = [
         'id_catatan','id_anak','id_orang_tua',
-        'judul_catatan','isi_catatan','tanggal'
+        'judul_catatan','isi_catatan','tanggal','dibaca_at'
     ];
 
     protected static function boot()

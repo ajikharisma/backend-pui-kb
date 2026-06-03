@@ -314,8 +314,8 @@
             <a href="/data-murid" class="nav-link-custom"><i class="bi bi-people"></i> Data Murid</a>
             <a href="{{ route('penilaian.create') }}" class="nav-link-custom"><i class="bi bi-journal-text"></i> Input Data Perkembangan</a>
             <a href="/perkembangan-anak" class="nav-link-custom"><i class="bi bi-bar-chart"></i> Perkembangan Anak</a>
-            <a href="#" class="nav-link-custom active"><i class="bi bi-file-earmark-bar-graph"></i> Hasil Analisis</a>
-            <a href="#" class="nav-link-custom"><i class="bi bi-book"></i> Catatan Anak Dirumah</a>
+            <a href="/hasil-analisis" class="nav-link-custom active"><i class="bi bi-file-earmark-bar-graph"></i> Hasil Analisis</a>
+            <a href="/catatan-anak-rumah" class="nav-link-custom"><i class="bi bi-book"></i> Catatan Anak Dirumah</a>
             <a href="/profil-guru" class="nav-link-custom"><i class="bi bi-person-badge"></i> Profil Guru</a>
             <div class="mt-5">
                 <a href="/logout" class="nav-link-custom text-danger"><i class="bi bi-box-arrow-right"></i> Keluar</a>

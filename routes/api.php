@@ -89,3 +89,9 @@ Route::get('/foto/{path}', function ($path) {
         'Cache-Control'                => 'public, max-age=86400',
     ]);
 })->where('path', '.*');
+
+// 🔥 SEMUA ROUTE CATATAN ORANG TUA 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/parent/catatan', [OrangTuaController::class, 'getCatatan']);
+    Route::post('/parent/catatan', [OrangTuaController::class, 'storeCatatan']);
+});

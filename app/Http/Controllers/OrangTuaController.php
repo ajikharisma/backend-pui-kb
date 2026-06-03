@@ -10,6 +10,7 @@ use App\Models\Penilaian;
 use App\Models\HasilAnalisis;
 use App\Models\Rpph;
 use Illuminate\Support\Facades\Log;
+use App\Models\CatatanOrangTua;
 
 class OrangTuaController extends Controller
 {
@@ -134,6 +135,96 @@ class OrangTuaController extends Controller
             ], 500);
         }
     }
+
+    public function storeCatatan(Request $request)
+    {
+        try {
+
+            $request->validate([
+                'judul_catatan' => 'required|string|max:255',
+                'isi_catatan'   => 'required|string',
+                'tanggal'       => 'required|date',
+            ]);
+
+            $user = $request->user();
+
+            $orangTua = OrangTua::where('id_user', $user->id_user)->first();
+
+            if (!$orangTua) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data orang tua tidak ditemukan'
+                ], 404);
+            }
+
+            $anak = $orangTua->anak()->first();
+
+            if (!$anak) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data anak tidak ditemukan'
+                ], 404);
+            }
+
+            $catatan = CatatanOrangTua::create([
+                'id_anak'       => $anak->id_anak,
+                'id_orang_tua'  => $orangTua->id_orang_tua,
+                'judul_catatan' => $request->judul_catatan,
+                'isi_catatan'   => $request->isi_catatan,
+                'tanggal'       => $request->tanggal,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Catatan berhasil disimpan',
+                'data'    => $catatan
+            ]);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    public function getCatatan(Request $request)
+    {
+        try {
+
+            $user = $request->user();
+
+            $orangTua = OrangTua::where('id_user', $user->id_user)->first();
+
+            if (!$orangTua) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data orang tua tidak ditemukan'
+                ], 404);
+            }
+
+            $anak = $orangTua->anak()->first();
+
+            $catatan = CatatanOrangTua::where('id_anak', $anak->id_anak)
+                ->orderBy('tanggal', 'desc')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $catatan
+            ]);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 
    public function getDashboardData(Request $request)
     {

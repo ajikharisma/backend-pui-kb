@@ -349,7 +349,7 @@
                 Hasil Analisis
             </a>
 
-            <a href="#" class="nav-link-custom">
+            <a href="/catatan-anak-rumah" class="nav-link-custom">
                 <i class="bi bi-book"></i>
                 Catatan Anak Dirumah
             </a>

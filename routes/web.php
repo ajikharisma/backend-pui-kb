@@ -10,6 +10,7 @@ use App\Models\Guru;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\PenilaianController;
+use App\Http\Controllers\CatatanOrangTuaController;
 
 // 🔥 HALAMAN AWAL (langsung ke login)
 Route::get('/', function () {
@@ -182,3 +183,14 @@ Route::get('/profil-guru', [GuruController::class, 'profilGuru']);
 // 2. Tambahkan ->name('profil-guru.update') di ujungnya
 Route::put('/profil-guru/update', [GuruController::class, 'updateProfilGuru'])->name('profil-guru.update');
 
+// ROUTE CATATAN ORANG TUA
+Route::get('/catatan-anak-rumah', [CatatanOrangTuaController::class, 'index'])
+    ->name('catatan-anak-rumah');
+
+Route::get('/catatan-anak-rumah/{id}', [CatatanOrangTuaController::class, 'show'])
+    ->name('catatan-anak-rumah.detail');
+
+Route::get(
+    '/catatan-anak-rumah/{id}',
+    [CatatanOrangTuaController::class, 'show']
+)->name('catatan.show');
