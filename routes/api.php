@@ -69,6 +69,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Detail hasil analisis per minggu
     Route::get('/parent/analisis/{minggu}', [OrangTuaController::class, 'getDetailAnalisis']);
+
+    Route::get('/parent/profil',           [OrangTuaController::class, 'getProfil']);
+    Route::post('/parent/profil/anak',     [OrangTuaController::class, 'updateProfilAnak']);
+    Route::post('/parent/profil/ortu',     [OrangTuaController::class, 'updateProfilOrtu']);
 });
 
 // 🔥 ROUTE FOTO STORAGE

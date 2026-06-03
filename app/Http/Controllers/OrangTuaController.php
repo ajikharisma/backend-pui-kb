@@ -484,4 +484,128 @@ class OrangTuaController extends Controller
         }
     }
 
+    public function getProfil(Request $request)
+    {
+        try {
+            $user     = $request->user();
+            $orangTua = OrangTua::where('id_user', $user->id_user)->first();
+    
+            if (!$orangTua) {
+                return response()->json(['success' => false, 'message' => 'Data orang tua tidak ditemukan'], 404);
+            }
+    
+            $anak = $orangTua->anak()->first();
+    
+            return response()->json([
+                'success'   => true,
+                'ortu' => [
+                    'nama'   => $user->nama,
+                    'email'  => $user->email,
+                    'no_hp'  => $user->no_hp,
+                    'alamat' => $orangTua->alamat,
+                ],
+                'anak' => $anak ? [
+                    'id_anak'       => $anak->id_anak,
+                    'nama_anak'     => $anak->nama_anak,
+                    'kelompok'      => $anak->kelompok,
+                    'tempat_lahir'  => $anak->tempat_lahir,
+                    'tanggal_lahir' => $anak->tanggal_lahir,
+                    'jenis_kelamin' => $anak->jenis_kelamin,
+                    'agama'         => $anak->agama,
+                    'foto'          => $anak->foto,
+                ] : null,
+            ]);
+    
+        } catch (\Exception $e) {
+            Log::error('Get Profil Error', ['message' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'Gagal mengambil profil'], 500);
+        }
+    }
+    
+    // ── UPDATE PROFIL ANAK ──
+    public function updateProfilAnak(Request $request)
+    {
+        try {
+            $user     = $request->user();
+            $orangTua = OrangTua::where('id_user', $user->id_user)->first();
+    
+            if (!$orangTua) {
+                return response()->json(['success' => false, 'message' => 'Data orang tua tidak ditemukan'], 404);
+            }
+    
+            $anak = $orangTua->anak()->first();
+    
+            if (!$anak) {
+                return response()->json(['success' => false, 'message' => 'Data anak tidak ditemukan'], 404);
+            }
+    
+            $request->validate([
+                'nama_anak'     => 'nullable|string|max:255',
+                'tempat_lahir'  => 'nullable|string|max:255',
+                'tanggal_lahir' => 'nullable|date',
+                'jenis_kelamin' => 'nullable|in:Laki-laki,Perempuan',
+                'agama'         => 'nullable|string|max:100',
+            ]);
+    
+            $anak->update(array_filter([
+                'nama_anak'     => $request->nama_anak,
+                'tempat_lahir'  => $request->tempat_lahir,
+                'tanggal_lahir' => $request->tanggal_lahir,
+                'jenis_kelamin' => $request->jenis_kelamin,
+                'agama'         => $request->agama,
+            ], fn($v) => $v !== null));
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Data anak berhasil diperbarui',
+                'anak'    => $anak->fresh(),
+            ]);
+    
+        } catch (\Exception $e) {
+            Log::error('Update Profil Anak Error', ['message' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+    
+    // ── UPDATE PROFIL ORANG TUA ──
+    public function updateProfilOrtu(Request $request)
+    {
+        try {
+            $user     = $request->user();
+            $orangTua = OrangTua::where('id_user', $user->id_user)->first();
+    
+            if (!$orangTua) {
+                return response()->json(['success' => false, 'message' => 'Data orang tua tidak ditemukan'], 404);
+            }
+    
+            $request->validate([
+                'nama'   => 'nullable|string|max:255',
+                'no_hp'  => 'nullable|string|max:20',
+                'alamat' => 'nullable|string',
+                'email'  => 'nullable|email|unique:users,email,' . $user->id_user . ',id_user',
+            ]);
+    
+            // Update user
+            if ($request->nama)  $user->nama  = $request->nama;
+            if ($request->email) $user->email = $request->email;
+            if ($request->no_hp) $user->no_hp = $request->no_hp;
+            $user->save();
+    
+            // Update orang tua
+            if ($request->alamat) {
+                $orangTua->alamat = $request->alamat;
+                $orangTua->save();
+            }
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Data orang tua berhasil diperbarui',
+            ]);
+    
+        } catch (\Exception $e) {
+            Log::error('Update Profil Ortu Error', ['message' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
 }
