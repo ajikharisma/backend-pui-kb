@@ -252,6 +252,8 @@ class GuruController extends Controller
 
             'jenis_kelamin' => $request->jenis_kelamin,
 
+            'agama' => $request->agama,
+
             'foto' => $fotoPath,
 
         ]);

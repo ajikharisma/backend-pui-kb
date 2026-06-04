@@ -318,7 +318,14 @@
             <a href="/catatan-anak-rumah" class="nav-link-custom"><i class="bi bi-book"></i> Catatan Anak Dirumah</a>
             <a href="/profil-guru" class="nav-link-custom"><i class="bi bi-person-badge"></i> Profil Guru</a>
             <div class="mt-5">
-                <a href="/logout" class="nav-link-custom text-danger"><i class="bi bi-box-arrow-right"></i> Keluar</a>
+                <form action="/logout" method="POST">
+                        @csrf
+
+                        <button type="submit" class="nav-link-custom text-danger border-0 bg-transparent w-100 text-start">
+                            <i class="bi bi-box-arrow-right"></i>
+                            Keluar
+                        </button>
+                    </form>
             </div>
         </div>
     </div>

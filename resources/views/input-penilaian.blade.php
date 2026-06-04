@@ -679,10 +679,14 @@
                 <!-- PUSH KE BAWAH -->
                 <div class="mt-auto pt-4">
 
-                    <a href="/logout" class="nav-link-custom text-danger">
-                        <i class="bi bi-box-arrow-right"></i>
-                        Keluar
-                    </a>
+                    <form action="/logout" method="POST">
+                        @csrf
+
+                        <button type="submit" class="nav-link-custom text-danger border-0 bg-transparent w-100 text-start">
+                            <i class="bi bi-box-arrow-right"></i>
+                            Keluar
+                        </button>
+                    </form>
 
                 </div>
 
