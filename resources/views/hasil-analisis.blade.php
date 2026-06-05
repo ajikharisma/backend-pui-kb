@@ -450,9 +450,11 @@
             <div class="d-flex align-items-center gap-2">
                 
                 <div class="text-end d-none d-sm-block">
-                    <span class="text-dark fw-semibold" style="font-size: 14px;">
-                        {{ auth()->user()->nama }}
-                    </span>
+                    <div class="fw-bold">
+                        <small class="text-muted">
+                            {{ auth()->user()->nama }}
+                        </small>
+                    </div>
                 </div>
 
                 @if($guru && $guru->foto)

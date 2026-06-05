@@ -625,11 +625,14 @@ class PenilaianController extends Controller
 
         $statusGlobal = $this->hitungStatusGlobal($hasilAnalisis);
         $tema         = $rpph->tema;
+        $tanggalAnalisis = $hasilDb->first()?->tanggal_analisis;
+        $aiGeneratedAt   = $hasilDb->where('ai_generated', true)->first()?->ai_generated_at;
+
 
         return view('detail-hasil-analisis', compact(
             'guru', 'anak', 'hasilAnalisis',
             'statusGlobal', 'rekomendasiAI',
-            'minggu', 'rpph', 'tema', 'id_anak'
+            'minggu', 'rpph', 'tema', 'id_anak','tanggalAnalisis', 'aiGeneratedAt'
         ));
     }
 

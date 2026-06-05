@@ -339,15 +339,14 @@
                 <button class="btn d-lg-none border-0 px-0" onclick="toggleSidebar()">
                     <i class="bi bi-list fs-2"></i>
                 </button>
-                <div>
-                    <div class="fw-bold" style="font-size:15px;">Hasil Analisis Perkembangan</div>
-                    <div style="font-size:12px;color:#94A3B8;">Minggu ke-{{ $minggu }} &mdash; {{ $tema }}</div>
-                </div>
             </div>
             <div class="d-flex align-items-center gap-3">
                 <div class="text-end d-none d-sm-block">
-                    <div class="fw-bold" style="font-size:14px;">{{ auth()->user()->nama }}</div>
-                    <small class="text-muted">Guru KB Nurul'Ain</small>
+                    <div class="fw-bold">
+                        <small class="text-muted">
+                            {{ auth()->user()->nama }}
+                        </small>
+                    </div>
                 </div>
                 @if($guru && $guru->foto)
                     <img src="{{ asset('storage/' . $guru->foto) }}" class="profile-img">
@@ -363,11 +362,6 @@
             {{-- BREADCRUMB & JUDUL --}}
             <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
                 <div>
-                    <div class="breadcrumb-text">
-                        Beranda /
-                        <a href="/perkembangan-anak" class="text-decoration-none" style="color:#94A3B8;">Perkembangan Anak</a> /
-                        <span class="fw-bold" style="color:#0284C7;">Hasil Analisis</span>
-                    </div>
                     <div class="page-title">Laporan Perkembangan</div>
                     <div class="page-subtitle">
                         {{ $anak->nama_anak }} &bull; Minggu ke-{{ $minggu }} &bull; {{ $tema }}
@@ -494,8 +488,9 @@
                 <!-- tanggal cetak -->
                 <div class="text-end mb-4">
                     <small class="text-muted">
-                        Dicetak pada:
-                        {{ now()->translatedFormat('d F Y H:i') }}
+                        Dicetak pada: {{ $tanggalAnalisis 
+                            ? \Carbon\Carbon::parse($tanggalAnalisis)->translatedFormat('d F Y') 
+                            : now()->translatedFormat('d F Y') }}
                     </small>
                 </div>
 
