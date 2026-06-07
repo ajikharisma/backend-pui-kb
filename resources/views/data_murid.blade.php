@@ -641,11 +641,48 @@
                         </div>
                         <nav>
                             <ul class="custom-pagination">
-                                <li><a href="#" class="page-item-nav"><i class="bi bi-chevron-left"></i></a></li>
-                                <li><a href="#" class="page-item-custom active">1</a></li>
-                                <li><a href="#" class="page-item-custom">2</a></li>
-                                <li><a href="#" class="page-item-custom">3</a></li>
-                                <li><a href="#" class="page-item-nav"><i class="bi bi-chevron-right"></i></a></li>
+                             <ul class="custom-pagination">
+
+                                {{-- Tombol Previous --}}
+                                @if($anak->onFirstPage())
+                                    <li>
+                                        <span class="page-item-nav" style="opacity:.5; cursor:not-allowed;">
+                                            <i class="bi bi-chevron-left"></i>
+                                        </span>
+                                    </li>
+                                @else
+                                    <li>
+                                        <a href="{{ $anak->previousPageUrl() }}" class="page-item-nav">
+                                            <i class="bi bi-chevron-left"></i>
+                                        </a>
+                                    </li>
+                                @endif
+
+                                {{-- Nomor Halaman --}}
+                                @for($i = 1; $i <= $anak->lastPage(); $i++)
+                                    <li>
+                                        <a href="{{ $anak->url($i) }}"
+                                        class="page-item-custom {{ $anak->currentPage() == $i ? 'active' : '' }}">
+                                            {{ $i }}
+                                        </a>
+                                    </li>
+                                @endfor
+
+                                {{-- Tombol Next --}}
+                                @if($anak->hasMorePages())
+                                    <li>
+                                        <a href="{{ $anak->nextPageUrl() }}" class="page-item-nav">
+                                            <i class="bi bi-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                @else
+                                    <li>
+                                        <span class="page-item-nav" style="opacity:.5; cursor:not-allowed;">
+                                            <i class="bi bi-chevron-right"></i>
+                                        </span>
+                                    </li>
+                                @endif
+
                             </ul>
                         </nav>
                     </div>
