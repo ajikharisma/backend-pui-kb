@@ -290,6 +290,7 @@
             .content { padding: 24px; }
         }
         @media (max-width: 768px) {
+            .profile-img { width: 38px; height: 38px; }
             .content { padding: 18px; }
             .global-status-text { font-size: 22px; }
             .page-title { font-size: 26px; }
@@ -334,12 +335,14 @@
     <div class="main-content flex-grow-1">
 
         {{-- TOPBAR --}}
-        <header class="topbar">
-            <div class="d-flex align-items-center gap-3">
+        <header class="topbar d-flex justify-content-between align-items-center">
+            
+            <div>
                 <button class="btn d-lg-none border-0 px-0" onclick="toggleSidebar()">
                     <i class="bi bi-list fs-2"></i>
                 </button>
             </div>
+            
             <div class="d-flex align-items-center gap-3">
                 <div class="text-end d-none d-sm-block">
                     <div class="fw-bold">
@@ -354,6 +357,7 @@
                     <img src="https://ui-avatars.com/api/?name=Guru&background=0ea5e9&color=fff" class="profile-img">
                 @endif
             </div>
+
         </header>
 
         {{-- CONTENT --}}

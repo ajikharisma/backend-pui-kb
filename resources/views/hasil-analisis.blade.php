@@ -131,8 +131,8 @@
         }
 
         .profile-img {
-            width: 42px;
-            height: 42px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             object-fit: cover;
         }
@@ -359,13 +359,126 @@
             margin-bottom:16px;
         }
 
+        /* RESPONSIVE BREAKPOINTS (PERBAIKAN UTAMA) */
         @media(max-width:1024px){
-            .sidebar{
-                display:none;
+            .sidebar {
+                transform: translateX(-100%);
+                transition: 0.3s;
+                display: flex !important; /* Kembalikan display flex agar script toggle bekerja */
             }
 
-            .main-content{
-                margin-left:0;
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        @media(max-width:768px){
+
+            .profile-img {
+                width: 38px;
+                height: 38px;
+            }
+
+            .content {
+                padding: 16px;
+            }
+
+            .page-title {
+                font-size: 26px;
+            }
+
+            .topbar {
+                padding: 15px;
+                justify-content: space-between !important; /* Membuat tombol menu di kiri dan profil di kanan */
+            }
+
+            /* 1. Mengubah struktur tabel menjadi list card bertumpuk */
+            .table-card {
+                background: transparent;
+                border: none;
+                overflow: visible;
+            }
+
+            .table-responsive {
+                border: none;
+            }
+
+            .table, .table thead, .table tbody, .table th, .table td, .table tr {
+                display: block;
+                width: 100%;
+            }
+
+            .table thead {
+                display: none; /* Sembunyikan header tabel asli */
+            }
+
+            .table tbody tr {
+                background: white;
+                border: 1px solid #F1F5F9;
+                border-radius: 20px;
+                padding: 20px;
+                margin-bottom: 16px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .table tbody td {
+                padding: 0 !important;
+                border: none !important;
+                width: 100% !important;
+                text-align: left !important;
+            }
+
+            /* Tata Letak Foto & Nama berdampingan */
+            .table tbody tr td:nth-child(1) {
+                display: inline-block;
+                width: auto !important;
+                float: left;
+                margin-right: 15px;
+            }
+
+            .table tbody tr td:nth-child(2) {
+                display: block;
+                overflow: hidden;
+                margin-bottom: 5px;
+            }
+
+            /* Pembatas info Minggu, Status, Confidence, dan Tombol Aksi */
+            .table tbody tr td:nth-child(3) {
+                border-top: 1px dashed #E2E8F0 !important;
+                padding-top: 12px !important;
+            }
+
+            /* Custom label teks bantuan sebelum data muncul */
+            .table tbody tr td:nth-child(3)::before { content: "Periode: "; font-weight: 700; color: #94A3B8; font-size: 13px; }
+            .table tbody tr td:nth-child(4)::before { content: "Status: "; font-weight: 700; color: #94A3B8; font-size: 13px; display: inline-block; margin-right: 5px; }
+            .table tbody tr td:nth-child(5)::before { content: "Confidence: "; font-weight: 700; color: #94A3B8; font-size: 13px; }
+
+            .table tbody tr td:nth-child(4) {
+                display: flex;
+                align-items: center;
+            }
+
+            .table tbody tr td:nth-child(5) div {
+                display: inline-block;
+            }
+
+            /* Tombol Aksi Memanjang Penuh di bawah Card */
+            .table tbody tr td:nth-child(6) {
+                display: block;
+                margin-top: 5px;
+            }
+
+            .aksi-btn {
+                width: 100%;
+                height: 44px;
+                margin: 0;
             }
         }
     </style>
@@ -445,7 +558,13 @@
     <div class="main-content flex-grow-1">
 
         {{-- TOPBAR --}}
-        <header class="topbar d-flex justify-content-end align-items-center">
+        <header class="topbar d-flex justify-content-between align-items-center">
+
+            <div>
+                <button class="btn d-lg-none border-0 px-0" onclick="toggleSidebar()">
+                    <i class="bi bi-list fs-2"></i>
+                </button>
+            </div>
 
             <div class="d-flex align-items-center gap-2">
                 
@@ -670,14 +789,14 @@
                                     {{-- AKSI --}}
                                     <td class="text-center">
 
-                                        <a
-                                            href="{{ route('detail.hasil.analisis', [
+                                        <a href="{{ route('detail.hasil.analisis', [
                                                 'id_anak' => $item->id_anak,
                                                 'minggu' => $item->rpph->minggu ?? 1
                                             ]) }}"
                                             class="aksi-btn view">
 
                                             <i class="bi bi-eye"></i>
+                                            <span class="d-inline d-md-none ms-2">Lihat Hasil Detail</span>
 
                                         </a>
 
@@ -716,6 +835,12 @@
     </div>
 
 </div>
+
+<script>
+    function toggleSidebar() {
+        document.querySelector('.sidebar').classList.toggle('show');
+    }
+</script>
 
 </body>
 </html>

@@ -486,8 +486,8 @@
             }
 
             .profile-img {
-                width: 40px;
-                height: 40px;
+                width: 38px;
+                height: 38px;
             }
 
             .page-title {
@@ -697,10 +697,10 @@
         <!-- MAIN CONTENT -->
         <div class="main-content flex-grow-1">
             <!-- TOPBAR -->
-            <header class="topbar">
+            <header class="topbar d-flex justify-content-between align-items-center">
 
                 <!-- LEFT -->
-                <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center gap-3 flex-grow-1">
 
                     <!-- BUTTON MOBILE -->
                     <button
@@ -730,28 +730,22 @@
 
                     <!-- NAMA -->
                     <div class="text-end d-none d-sm-block">
-
                         <div class="fw-bold">
                             <small class="text-muted">
                                 {{ auth()->user()->nama }}
                             </small>
                         </div>
-
                     </div>
 
                     <!-- FOTO -->
                     @if($guru && $guru->foto)
-
-                    <img
-                        src="{{ asset('storage/' . $guru->foto) }}"
-                        class="profile-img">
-
+                        <img
+                            src="{{ asset('storage/' . $guru->foto) }}"
+                            class="profile-img">
                     @else
-
-                    <img
-                        src="https://ui-avatars.com/api/?name=Guru&background=0ea5e9&color=fff"
-                        class="profile-img">
-
+                        <img
+                            src="https://ui-avatars.com/api/?name=Guru&background=0ea5e9&color=fff"
+                            class="profile-img">
                     @endif
 
                 </div>

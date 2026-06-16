@@ -261,6 +261,11 @@
 
         @media(max-width:768px){
 
+            .profile-img{
+                width: 38px;
+                height: 38px;
+            }
+
             .content{
                 padding: 18px;
             }
@@ -362,10 +367,6 @@
                 <button class="btn d-lg-none border-0 px-0" onclick="toggleSidebar()">
                     <i class="bi bi-list fs-2"></i>
                 </button>
-                <div>
-                    <div class="fw-bold" style="font-size:15px;">Profil Biodata Guru</div>
-                    <div style="font-size:12px;color:#94A3B8;">Kelola informasi akun Anda secara langsung</div>
-                </div>
             </div>
 
             <div class="d-flex align-items-center gap-3">

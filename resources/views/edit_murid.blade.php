@@ -284,6 +284,15 @@
             font-weight: 700;
         }
 
+        .btn-kembali{
+            background: white;
+            border: 1px solid #CBD5E1;
+            color: #334155;
+            padding: 14px 28px;
+            border-radius: 14px;
+            font-weight: 700;
+        }
+
         .badge-kelompok{
             background: #E0F2FE;
             color: #0284C7;
@@ -325,6 +334,31 @@
                 font-size: 28px;
             }
 
+            /* === TAMBAHKAN KODE BARU DI BAWAH INI === */
+
+            /* Foto profil guru mengecil secara pas di HP sesuai standarisasi dashboard */
+            .profile-img {
+                width: 38px;
+                height: 38px;
+            }
+
+            /* Membuat baris judul dan tombol kembali responsif */
+            .btn-kembali {
+                width: 50%;
+                text-align: center;
+            }
+
+            /* Tombol Batal dan Update Data di paling bawah menjadi full-width bertumpuk */
+            .main-content .d-flex.justify-content-end.mt-4.flex-wrap {
+                flex-direction: column-reverse; /* Tombol batal di bawah, update di atas */
+                gap: 12px !important;
+            }
+
+            .btn-batal, .btn-simpan {
+                width: 100%;
+                text-align: center;
+                padding: 14px;
+            }
         }
 
     </style>
@@ -412,11 +446,11 @@
     <div class="main-content flex-grow-1">
 
         <!-- TOPBAR -->
-        <header class="topbar">
+        <header class="topbar d-flex justify-content-between align-items-center">
 
             <div>
                 <button
-                    class="btn d-lg-none border-0"
+                    class="btn d-lg-none border-0 px-0"
                     onclick="toggleSidebar()">
 
                     <i class="bi bi-list fs-2"></i>
@@ -426,24 +460,20 @@
 
             <div class="d-flex align-items-center gap-3">
 
-                <div class="text-end">
+                <div class="text-end d-none d-sm-block">
                     <small class="text-muted fw-bold">
                         {{ auth()->user()->nama }}
                     </small>
                 </div>
 
                 @if($guru && $guru->foto)
-
                     <img
                         src="{{ asset('storage/' . $guru->foto) }}"
                         class="profile-img">
-
                 @else
-
                     <img
                         src="https://ui-avatars.com/api/?name=Guru&background=0ea5e9&color=fff"
                         class="profile-img">
-
                 @endif
 
             </div>
@@ -476,7 +506,7 @@
                 </div>
 
                 <!-- BUTTON KEMBALI -->
-                <a href="/data-murid" class="btn-batal text-decoration-none">
+                <a href="/data-murid" class="btn-kembali text-decoration-none">
 
                     <i class="bi bi-arrow-left me-2"></i>
 

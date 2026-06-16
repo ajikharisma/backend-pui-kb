@@ -32,6 +32,11 @@
             overflow-x: hidden;
         }
 
+        html{
+            overflow-x:hidden;
+            width:100%;
+        }
+
         .sidebar{
             width: 270px;
             height: 100vh;
@@ -182,7 +187,6 @@
         }
 
         .table-custom{
-            overflow: hidden;
             border-radius: 20px;
             border: 1px solid #E2E8F0;
         }
@@ -254,6 +258,36 @@
             font-weight: 700;
         }
 
+        .profile-wrapper{
+            width:100%;
+        }
+
+        .profile-wrapper img{
+            max-width:100%;
+        }
+
+        .profile-wrapper h2{
+            word-break: break-word;
+        }
+
+        .detail-card{
+            overflow: hidden;
+        }
+
+        .row{
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        .ai-box{
+            border: 2px dashed #CBD5E1;
+            border-radius: 28px;
+            background: #F8FAFC;
+            padding: 50px;
+            text-align: center;
+            overflow-wrap: break-word;
+        }
+
         @media(max-width:992px){
 
             .sidebar{
@@ -273,10 +307,92 @@
 
         @media(max-width:768px){
 
-            .content{
-                padding: 18px;
+            .profile-img{
+                width: 38px;
+                height: 38px;
             }
 
+            .btn-kembali{
+                width: 50%;
+                text-align: center;
+                order: -1; /* Membuat tombol kembali berada di paling atas saat di HP */
+            }
+
+            .content{
+                padding: 16px;
+            }
+
+            .detail-card{
+                padding: 20px 16px;
+                border-radius: 20px;
+            }
+
+            /* Perbaikan Profile Anak agar berjejer rapi ke bawah di HP */
+            .profile-wrapper {
+                flex-direction: column !important;
+                text-align: center !important;
+            }
+
+            .student-photo{
+                width: 100px;
+                height: 100px;
+            }
+
+            .topbar{
+                padding: 15px;
+            }
+
+            /* Mengubah tabel mentah menjadi susunan list card agar tidak perlu di-scroll */
+            .table-responsive {
+                border: none;
+            }
+
+            .table-custom, .table-custom thead, .table-custom tbody, .table-custom th, .table-custom td, .table-custom tr {
+                display: block;
+                width: 100%;
+            }
+
+            .table-custom thead {
+                display: none; /* Sembunyikan header asli */
+            }
+
+            .table-custom tbody tr {
+                background: #F8FAFC;
+                border: 1px solid #E2E8F0;
+                border-radius: 16px;
+                padding: 16px;
+                margin-bottom: 12px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .table-custom td {
+                padding: 0 !important;
+                border: none !important;
+            }
+
+            /* Beri penanda teks sebelum data tampil di HP */
+            .table-custom td:nth-child(1)::before { content: "Tanggal: "; font-weight: 700; color: #64748B; }
+            .table-custom td:nth-child(2)::before { content: "Topik: "; font-weight: 700; color: #64748B; }
+            .table-custom td:nth-child(3)::before { content: "Aspek: "; font-weight: 700; color: #64748B; }
+            .table-custom td:nth-child(4)::before { content: "Capaian: "; font-weight: 700; color: #64748B; }
+            .table-custom td:nth-child(5) { 
+                border-top: 1px dashed #E2E8F0 !important; 
+                padding-top: 8px !important; 
+                margin-top: 4px;
+            }
+
+            .ai-box{
+                padding: 30px 16px;
+            }
+
+            .btn-analisis{
+                width: 100%;
+            }
+
+            h1{ font-size: 1.5rem; }
+            h2{ font-size: 1.3rem; }
         }
 
     </style>
@@ -377,46 +493,42 @@
     {{-- MAIN --}}
     <div class="main-content flex-grow-1">
 
-        {{-- TOPBAR --}}
-        <header class="topbar">
+        <!-- TOPBAR (Sudah Konsisten & Responsif Pas dengan Dashboard Utama) -->
+        <header class="topbar d-flex justify-content-between align-items-center">
 
-        <div>
-            <button
-                class="btn d-lg-none border-0"
-                onclick="toggleSidebar()">
+            <div>
+                <button
+                    class="btn d-lg-none border-0 px-0"
+                    onclick="toggleSidebar()">
 
-                <i class="bi bi-list fs-2"></i>
+                    <i class="bi bi-list fs-2"></i>
 
-            </button>
-        </div>
+                </button>
+            </div>
 
-        <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-center gap-3">
 
-            <div class="text-end">
+                <div class="text-end d-none d-sm-block">
+                    <div class="fw-bold">
+                        <small class="text-muted">
+                            {{ auth()->user()->nama }}
+                        </small>
+                    </div>
+                </div>
 
-                <small class="text-muted fw-bold">
-                    {{ auth()->user()->nama }}
-                </small>
+                @if($guru && $guru->foto)
+                    <img
+                        src="{{ asset('storage/' . $guru->foto) }}"
+                        class="profile-img">
+                @else
+                    <img
+                        src="https://ui-avatars.com/api/?name=Guru&background=0ea5e9&color=fff"
+                        class="profile-img">
+                @endif
 
             </div>
 
-            @if($guru && $guru->foto)
-
-                <img
-                    src="{{ asset('storage/' . $guru->foto) }}"
-                    class="profile-img">
-
-            @else
-
-                <img
-                    src="https://ui-avatars.com/api/?name=Guru&background=0ea5e9&color=fff"
-                    class="profile-img">
-
-            @endif
-
-        </div>
-
-    </header>
+        </header>
 
         {{-- CONTENT --}}
         <div class="content">
@@ -434,7 +546,7 @@
             @endif
 
             {{-- HEADER --}}
-            <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
 
                 <div>
 
@@ -445,18 +557,17 @@
                         </span>
                     </div>
 
-                    <h1 class="fw-bold">
+                    <h1 class="fw-bold mb-1">
                         Detail Perkembangan Anak
                     </h1>
 
-                    <p class="text-muted">
+                    <p class="text-muted mb-0">
                         Data perkembangan mingguan anak
                     </p>
 
                 </div>
 
-                <a href="/perkembangan-anak"
-                   class="btn-kembali">
+                <a href="/perkembangan-anak" class="btn-kembali text-decoration-none">
 
                     <i class="bi bi-arrow-left me-2"></i>
                     Kembali
@@ -468,52 +579,45 @@
             {{-- PROFILE --}}
             <div class="detail-card">
 
-                <div class="d-flex justify-content-between flex-wrap gap-4">
+                <div class="row g-4 align-items-center">
 
-                    <div class="d-flex align-items-center gap-4">
+                    <div class="col-12 col-lg-8">
+                        <div class="d-flex flex-column flex-md-row align-items-center text-center text-md-start gap-4 profile-wrapper">
 
-                        @if($anak->foto)
+                            @if($anak->foto)
+                                <img
+                                    src="{{ asset('storage/' . $anak->foto) }}"
+                                    class="student-photo">
+                            @else
+                                <img
+                                    src="https://ui-avatars.com/api/?name={{ urlencode($anak->nama_anak) }}&background=0ea5e9&color=fff"
+                                    class="student-photo">
+                            @endif
 
-                            <img
-                                src="{{ asset('storage/' . $anak->foto) }}"
-                                class="student-photo">
+                            <div>
+                                <h2 class="fw-bold mb-3">
+                                    {{ $anak->nama_anak }}
+                                </h2>
 
-                        @else
+                                <div class="d-flex flex-wrap justify-content-center justify-content-md-start gap-2">
 
-                            <img
-                                src="https://ui-avatars.com/api/?name={{ urlencode($anak->nama_anak) }}&background=0ea5e9&color=fff"
-                                class="student-photo">
+                                    <span class="badge-kelompok">
+                                        Kelompok {{ $anak->kelompok }}
+                                    </span>
 
-                        @endif
+                                    <span class="badge-umur">
+                                        Umur
+                                        {{ \Carbon\Carbon::parse($anak->tanggal_lahir)->age }}
+                                        Tahun
+                                    </span>
 
-                        <div>
-
-                            <h2 class="fw-bold mb-3">
-                                {{ $anak->nama_anak }}
-                            </h2>
-
-                            <div class="d-flex gap-2 flex-wrap">
-
-                                <span class="badge-kelompok">
-                                    Kelompok {{ $anak->kelompok }}
-                                </span>
-
-                                <span class="badge-umur">
-
-                                    Umur
-                                    {{ \Carbon\Carbon::parse($anak->tanggal_lahir)->age }}
-                                    Tahun
-
-                                </span>
-
+                                </div>
                             </div>
 
                         </div>
-
                     </div>
 
-                    <div>
-
+                    <div class="col-12 col-lg-4">
                         <label class="fw-bold text-muted mb-2">
                             Periode
                         </label>
@@ -529,7 +633,6 @@
                             </small>
 
                         </div>
-
                     </div>
 
                 </div>
@@ -543,9 +646,9 @@
                     Data Perkembangan Mentah
                 </h5>
 
-                <div class="table-responsive table-custom">
+                <div class="table-responsive">
 
-                    <table class="table align-middle mb-0">
+                    <table class="table table-custom align-middle mb-0">
 
                         <thead>
 

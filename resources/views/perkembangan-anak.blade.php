@@ -302,6 +302,7 @@
         }
 
         .stat-card{
+            height: 100%;
             background: white;
             border-radius: 24px;
             padding: 24px;
@@ -376,6 +377,7 @@
         }
 
         .mini-box{
+            flex: 1;
             background: white;
             padding: 20px;
             border-radius: 20px;
@@ -399,32 +401,122 @@
 
         @media(max-width:768px){
 
-            .sidebar{
-                transform: translateX(-100%);
-                transition: .3s;
-            }
-
-            .sidebar.show{
-                transform: translateX(0);
-            }
-
-            .main-content{
-                margin-left: 0;
-            }
-
-            .content{
-                padding: 20px;
-            }
-
-            .page-title{
-                font-size: 28px;
-            }
-
-            .table{
-                min-width: 900px;
-            }
-
+        .profile-img{
+            width: 38px;
+            height: 38px;
         }
+
+        .sidebar{
+            transform: translateX(-100%);
+            transition: .3s;
+        }
+
+        .sidebar.show{
+            transform: translateX(0);
+        }
+
+        .main-content{
+            margin-left: 0;
+        }
+
+        .content{
+            padding: 20px;
+        }
+
+        .page-title{
+            font-size: 28px;
+        }
+
+        /* === GANTI & TAMBAHKAN KODE DI BAWAH INI === */
+        
+        /* 1. Mengubah struktur tabel menjadi model card list yang menumpuk */
+        .table-card {
+            background: transparent;
+            border: none;
+            overflow: visible;
+        }
+
+        .table-wrapper {
+            max-height: none;
+            overflow: visible;
+        }
+
+        .table, .table thead, .table tbody, .table th, .table td, .table tr {
+            display: block;
+            width: 100%;
+        }
+
+        .table thead {
+            display: none; /* Menyembunyikan header tabel di HP */
+        }
+
+        .table tbody tr {
+            background: white;
+            border: 1px solid #F1F5F9;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .table tbody td {
+            padding: 0 !important;
+            border: none !important;
+            width: 100% !important;
+            text-align: left !important;
+        }
+
+        /* 2. Mengatur tata letak Foto & Nama berdampingan */
+        .table tbody tr td:nth-child(1) {
+            display: inline-block;
+            width: auto !important;
+            float: left;
+            margin-right: 15px;
+        }
+
+        .table tbody tr td:nth-child(2) {
+            display: block;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        /* 3. Pembatas baris info minggu, status, dan aksi */
+        .table tbody tr td:nth-child(3) {
+            border-top: 1px dashed #E2E8F0 !important;
+            padding-top: 12px !important;
+        }
+
+        .table tbody tr td:nth-child(4) {
+            display: flex;
+            align-items: center;
+            margin-top: 4px;
+        }
+
+        .table tbody tr td:nth-child(5) {
+            display: block;
+            text-align: right !important;
+            margin-top: 5px;
+        }
+
+        /* 4. Tombol aksi menjadi full lebar di HP agar mudah ditekan */
+        .aksi-btn {
+            width: 100%; 
+            height: 44px;
+            margin: 0;
+        }
+
+        /* 5. Perbaikan ringkasan & mini box bawah agar tidak memanjang keluar */
+        .summary-box {
+            padding: 24px;
+        }
+        
+        .summary-title {
+            font-size: 22px;
+        }
+    }
 
     </style>
 </head>
@@ -511,9 +603,9 @@
     <div class="main-content flex-grow-1">
 
         <!-- TOPBAR -->
-        <header class="topbar">
+        <header class="topbar d-flex justify-content-between align-items-center">
 
-            <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-center gap-3 flex-grow-1">
 
                 <button
                     class="btn d-lg-none border-0 px-0"
@@ -537,7 +629,7 @@
 
             </div>
 
-            <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-center gap-3 ms-3">
 
                 <div class="text-end d-none d-sm-block">
 
@@ -550,17 +642,13 @@
                 </div>
 
                 @if($guru && $guru->foto)
-
                     <img
                         src="{{ asset('storage/' . $guru->foto) }}"
                         class="profile-img">
-
                 @else
-
                     <img
                         src="https://ui-avatars.com/api/?name=Guru&background=0ea5e9&color=fff"
                         class="profile-img">
-
                 @endif
 
             </div>
@@ -679,18 +767,12 @@
 
                                 <!-- AKSI -->
                                 <td class="text-center">
-
-                                    <a
-                                        href="{{ route('detail-perkembangan', [
-                                            'id_anak' => $item->id_anak,
-                                            'minggu' => $item->rpph->minggu
-                                        ]) }}"
-                                        class="aksi-btn view">
-
-                                        <i class="bi bi-eye"></i>
-
+                                    <a href="{{ route('detail-perkembangan', ['id_anak' => $item->id_anak, 'minggu' => $item->rpph->minggu]) }}" class="aksi-btn view">
+                                        
+                                        <i class="bi bi-eye"></i> 
+                                        <span class="d-inline d-md-none ms-2">Lihat Detail</span>
+                                        
                                     </a>
-
                                 </td>
 
                             </tr>

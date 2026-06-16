@@ -317,12 +317,20 @@
                 padding: 18px;
             }
 
-            .card-custom{
-                padding: 22px;
-            }
-
             .page-title{
                 font-size: 28px;
+            }
+
+            /* Foto profil guru mengecil secara pas di HP sesuai standarisasi dashboard */
+            .profile-img {
+                width: 38px;
+                height: 38px;
+            }
+
+            /* Mengatur struktur baris judul agar tombol kembali turun rapi ke bawah */
+            .btn-batal {
+                width: 100%;
+                text-align: center;
             }
 
         }

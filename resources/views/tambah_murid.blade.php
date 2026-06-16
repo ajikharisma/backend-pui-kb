@@ -340,6 +340,11 @@
 
         @media(max-width:768px){
 
+            .profile-img{
+                width: 38px;
+                height: 38px;
+            }
+
             .content{
                 padding: 18px;
             }

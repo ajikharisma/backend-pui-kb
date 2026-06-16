@@ -449,7 +449,7 @@
             .search-wrapper { width: 170px; }
             .search-wrapper i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94A3B8; font-size: 18px; display: flex; align-items: center; }
             .search-input { width: 100%; height: 48px; padding: 0 20px 0 48px; font-size: 14px; }
-            .profile-img { width: 40px; height: 40px; }
+            .profile-img { width: 38px; height: 38px; }
             .page-title { font-size: 26px; line-height: 1.3; }
             .page-subtitle { font-size: 14px; }
             .breadcrumb-text { font-size: 12px; }
@@ -469,6 +469,80 @@
             .stat-icon { width: 50px; height: 50px; font-size: 20px; }
             .stat-label { font-size: 11px; }
             .stat-value { font-size: 20px; }
+
+            /* Sembunyikan tabel biasa */
+            .table-desktop { display: none; }
+
+            /* Tampilkan card list */
+            .card-list-mobile { display: block; padding: 12px; }
+
+            .murid-card {
+                background: white;
+                border: 1px solid #F1F5F9;
+                border-radius: 18px;
+                padding: 16px;
+                margin-bottom: 12px;
+                box-shadow: 0 2px 8px rgba(0,0,0,.04);
+            }
+
+            .murid-card-top {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                margin-bottom: 14px;
+            }
+
+            .murid-card-info { flex: 1; }
+
+            .murid-card-name {
+                font-weight: 800;
+                font-size: 15px;
+                color: #0F172A;
+                margin-bottom: 4px;
+            }
+
+            .murid-card-meta {
+                font-size: 12px;
+                color: #64748B;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+
+            .murid-card-actions {
+                display: flex;
+                gap: 8px;
+                border-top: 1px solid #F1F5F9;
+                padding-top: 12px;
+            }
+
+            .murid-card-actions a,
+            .murid-card-actions button {
+                flex: 1;
+                height: 38px;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+                font-size: 12px;
+                font-weight: 700;
+                text-decoration: none;
+                border: none;
+                cursor: pointer;
+                transition: .2s;
+            }
+
+            .murid-card-actions .btn-lihat  { background: #E0F2FE; color: #0284C7; }
+            .murid-card-actions .btn-edit   { background: #FEF3C7; color: #D97706; }
+            .murid-card-actions .btn-hapus  { background: #FEE2E2; color: #DC2626; }
+        }
+
+        /* Desktop: sembunyikan card list */
+        @media (min-width: 769px) {
+            .card-list-mobile { display: none; }
+            .table-desktop    { display: block; }
         }
 
         @media (max-width: 480px) {
@@ -591,103 +665,131 @@
             </div>
 
             <div class="table-card">
-                <div class="table-responsive">
-                    <table class="table align-middle mb-0">
-                        <thead>
-                            <tr>
-                                <th>FOTO</th>
-                                <th>NAMA LENGKAP</th>
-                                <th>KELOMPOK</th>
-                                <th>UMUR</th>
-                                <th>STATUS</th>
-                                <th class="text-center">AKSI</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                            @foreach($anak as $item)
-                            <tr>
-                                <td>
-                                    @if($item->foto)
-                                        <img src="{{ asset('storage/' . $item->foto) }}" class="student-img">
-                                    @else
-                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($item->nama_anak) }}&background=0ea5e9&color=fff" class="student-img">
-                                    @endif
-                                </td>
-                                <td class="student-name">{{ $item->nama_anak }}</td>
-                                <td><span class="badge-kelompok">Kelompok {{ $item->kelompok }}</span></td>
-                                <td class="fw-bold">{{\Carbon\Carbon::parse($item->tanggal_lahir)->age}} Tahun</td>
-                                <td><span class="badge-status">AKTIF</span></td>
-                                <td class="text-center">
-                                    <a href="{{ route('detail.murid', $item->id_anak) }}" class="aksi-btn view">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    <a href="{{ route('edit.murid', $item->id_anak) }}" class="aksi-btn edit">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <a href="#" class="aksi-btn delete" onclick="mintaKonfirmasiHapus(event, '{{ route('hapus.murid', $item->id_anak) }}')">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
 
-                <div class="p-4">
-                    <div class="pagination-wrapper">
-                        <div class="pagination-info">
-                            Menampilkan <b>1-{{ $anak->count() }}</b> dari <b>{{ $totalAnak }}</b> murid
+            {{-- ── TABEL DESKTOP ── --}}
+            <div class="table-responsive table-desktop">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>FOTO</th>
+                            <th>NAMA LENGKAP</th>
+                            <th>KELOMPOK</th>
+                            <th>UMUR</th>
+                            <th>STATUS</th>
+                            <th class="text-center">AKSI</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        @foreach($anak as $item)
+                        <tr>
+                            <td>
+                                @if($item->foto)
+                                    <img src="{{ asset('storage/' . $item->foto) }}" class="student-img">
+                                @else
+                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($item->nama_anak) }}&background=0ea5e9&color=fff" class="student-img">
+                                @endif
+                            </td>
+                            <td class="student-name">{{ $item->nama_anak }}</td>
+                            <td><span class="badge-kelompok">Kelompok {{ $item->kelompok }}</span></td>
+                            <td class="fw-bold">{{ \Carbon\Carbon::parse($item->tanggal_lahir)->age }} Tahun</td>
+                            <td><span class="badge-status">AKTIF</span></td>
+                            <td class="text-center">
+                                <a href="{{ route('detail.murid', $item->id_anak) }}" class="aksi-btn view">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{{ route('edit.murid', $item->id_anak) }}" class="aksi-btn edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="#" class="aksi-btn delete"
+                                onclick="mintaKonfirmasiHapus(event, '{{ route('hapus.murid', $item->id_anak) }}')">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            {{-- ── CARD LIST MOBILE ── --}}
+            <div class="card-list-mobile" id="cardListMobile">
+                @foreach($anak as $item)
+                <div class="murid-card" data-nama="{{ strtolower($item->nama_anak) }}">
+
+                    {{-- Info anak --}}
+                    <div class="murid-card-top">
+                        @if($item->foto)
+                            <img src="{{ asset('storage/' . $item->foto) }}"
+                                style="width:52px;height:52px;border-radius:50%;object-fit:cover;">
+                        @else
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode($item->nama_anak) }}&background=0ea5e9&color=fff"
+                                style="width:52px;height:52px;border-radius:50%;object-fit:cover;">
+                        @endif
+
+                        <div class="murid-card-info">
+                            <div class="murid-card-name">{{ $item->nama_anak }}</div>
+                            <div class="murid-card-meta">
+                                <span class="badge-kelompok" style="font-size:11px;padding:4px 10px;">
+                                    Kelompok {{ $item->kelompok }}
+                                </span>
+                                <span>{{ \Carbon\Carbon::parse($item->tanggal_lahir)->age }} Tahun</span>
+                                <span class="badge-status" style="font-size:11px;padding:4px 10px;">AKTIF</span>
+                            </div>
                         </div>
-                        <nav>
-                            <ul class="custom-pagination">
-                             <ul class="custom-pagination">
-
-                                {{-- Tombol Previous --}}
-                                @if($anak->onFirstPage())
-                                    <li>
-                                        <span class="page-item-nav" style="opacity:.5; cursor:not-allowed;">
-                                            <i class="bi bi-chevron-left"></i>
-                                        </span>
-                                    </li>
-                                @else
-                                    <li>
-                                        <a href="{{ $anak->previousPageUrl() }}" class="page-item-nav">
-                                            <i class="bi bi-chevron-left"></i>
-                                        </a>
-                                    </li>
-                                @endif
-
-                                {{-- Nomor Halaman --}}
-                                @for($i = 1; $i <= $anak->lastPage(); $i++)
-                                    <li>
-                                        <a href="{{ $anak->url($i) }}"
-                                        class="page-item-custom {{ $anak->currentPage() == $i ? 'active' : '' }}">
-                                            {{ $i }}
-                                        </a>
-                                    </li>
-                                @endfor
-
-                                {{-- Tombol Next --}}
-                                @if($anak->hasMorePages())
-                                    <li>
-                                        <a href="{{ $anak->nextPageUrl() }}" class="page-item-nav">
-                                            <i class="bi bi-chevron-right"></i>
-                                        </a>
-                                    </li>
-                                @else
-                                    <li>
-                                        <span class="page-item-nav" style="opacity:.5; cursor:not-allowed;">
-                                            <i class="bi bi-chevron-right"></i>
-                                        </span>
-                                    </li>
-                                @endif
-
-                            </ul>
-                        </nav>
                     </div>
+
+                    {{-- Tombol aksi --}}
+                    <div class="murid-card-actions">
+                        <a href="{{ route('detail.murid', $item->id_anak) }}" class="btn-lihat">
+                            <i class="bi bi-eye"></i> Lihat
+                        </a>
+                        <a href="{{ route('edit.murid', $item->id_anak) }}" class="btn-edit">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                        <button class="btn-hapus"
+                                onclick="mintaKonfirmasiHapus(event, '{{ route('hapus.murid', $item->id_anak) }}')">
+                            <i class="bi bi-trash"></i> Hapus
+                        </button>
+                    </div>
+
+                </div>
+                @endforeach
+            </div>
+
+            {{-- PAGINATION --}}
+            <div class="p-4">
+                <div class="pagination-wrapper">
+                    <div class="pagination-info">
+                        Menampilkan <b>1-{{ $anak->count() }}</b> dari <b>{{ $totalAnak }}</b> murid
+                    </div>
+                    <nav>
+                        <ul class="custom-pagination">
+                            @if($anak->onFirstPage())
+                                <li><span class="page-item-nav" style="opacity:.5;cursor:not-allowed;"><i class="bi bi-chevron-left"></i></span></li>
+                            @else
+                                <li><a href="{{ $anak->previousPageUrl() }}" class="page-item-nav"><i class="bi bi-chevron-left"></i></a></li>
+                            @endif
+
+                            @for($i = 1; $i <= $anak->lastPage(); $i++)
+                                <li>
+                                    <a href="{{ $anak->url($i) }}"
+                                    class="page-item-custom {{ $anak->currentPage() == $i ? 'active' : '' }}">
+                                        {{ $i }}
+                                    </a>
+                                </li>
+                            @endfor
+
+                            @if($anak->hasMorePages())
+                                <li><a href="{{ $anak->nextPageUrl() }}" class="page-item-nav"><i class="bi bi-chevron-right"></i></a></li>
+                            @else
+                                <li><span class="page-item-nav" style="opacity:.5;cursor:not-allowed;"><i class="bi bi-chevron-right"></i></span></li>
+                            @endif
+                        </ul>
+                    </nav>
                 </div>
             </div>
+
+        </div>
 
             <div class="row mt-4">
                 <div class="col-md-4 mb-3">
