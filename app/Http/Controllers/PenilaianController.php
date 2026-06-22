@@ -14,6 +14,7 @@ use App\Models\Indikator;
 use App\Models\Rpph;
 use App\Models\Asesmen;
 use App\Services\GeminiService;
+use App\Services\NotificationService;
 use Illuminate\Support\Facades\Log;
 
 class PenilaianController extends Controller
@@ -75,6 +76,16 @@ class PenilaianController extends Controller
                 'tanggal'      => $request->tanggal,
                 'periode'      => $request->periode,
             ]);
+
+            // ← BUNGKUS dengan try-catch terpisah supaya tidak menggagalkan penilaian
+            try {
+                $notifService = new NotificationService();
+                $notifService->kirimNotifPenilaianHarian($request->id_anak, $request->tanggal);
+            } catch (\Exception $e) {
+                Log::error('[NOTIF] Gagal kirim notifikasi tapi penilaian tetap tersimpan', [
+                    'message' => $e->getMessage(),
+                ]);
+            }
 
             return response()->json([
                 'message' => 'Penilaian berhasil disimpan',
@@ -353,6 +364,14 @@ class PenilaianController extends Controller
             ]);
 
         Log::info('[ANALISIS] Selesai untuk ' . $anak->nama_anak);
+
+        // ← TAMBAH INI: kirim notifikasi hasil analisis ke orang tua
+        $notifService = new NotificationService();
+        $notifService->kirimNotifHasilAnalisis(
+            $id_anak,
+            $minggu,
+            $statusGlobal['status']
+        );
 
         return redirect()->route('detail-perkembangan', [
             'id_anak' => $id_anak,

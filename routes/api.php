@@ -73,6 +73,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/parent/profil',           [OrangTuaController::class, 'getProfil']);
     Route::post('/parent/profil/anak',     [OrangTuaController::class, 'updateProfilAnak']);
     Route::post('/parent/profil/ortu',     [OrangTuaController::class, 'updateProfilOrtu']);
+
+    // ← TAMBAH BARIS INI
+    Route::post('/parent/fcm-token', [OrangTuaController::class, 'updateFcmToken']);
+
+    Route::get('/parent/notifikasi', [OrangTuaController::class, 'getNotifikasi']);
+    Route::post('/parent/notifikasi/{id}/baca', [OrangTuaController::class, 'bacaNotifikasi']);
+    Route::post('/parent/notifikasi/baca-semua', [OrangTuaController::class, 'bacaSemuaNotifikasi']);
 });
 
 // 🔥 ROUTE FOTO STORAGE

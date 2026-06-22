@@ -699,4 +699,138 @@ class OrangTuaController extends Controller
         }
     }
 
+    // =========================================================
+    // 🔥 SIMPAN/UPDATE FCM TOKEN UNTUK NOTIFIKASI PUSH
+    // =========================================================
+    public function updateFcmToken(Request $request)
+    {
+        try {
+            $request->validate([
+                'fcm_token' => 'required|string',
+            ]);
+
+            $user = $request->user();
+            $user->fcm_token = $request->fcm_token;
+            $user->save();
+
+            Log::info('[FCM] Token disimpan untuk user: ' . $user->id_user);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Token notifikasi berhasil disimpan',
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('[FCM] Gagal simpan token', ['message' => $e->getMessage()]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menyimpan token notifikasi',
+            ], 500);
+        }
+    }
+
+    // =========================================================
+    // 🔥 LIST NOTIFIKASI UNTUK ORANG TUA
+    // =========================================================
+    public function getNotifikasi(Request $request)
+    {
+        try {
+            $user = $request->user();
+
+            $notifikasi = \App\Models\Notifikasi::with('anak')
+                ->where('id_user', $user->id_user)
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'id_notif'    => $item->id_notif,
+                        'judul'       => $item->judul,
+                        'pesan'       => $item->pesan,
+                        'jenis'       => $item->jenis,
+                        'status_baca' => (bool) $item->status_baca,
+                        'tanggal'     => $item->tanggal,
+                        'created_at'  => $item->created_at,
+                        'nama_anak'   => $item->anak->nama_anak ?? '-',
+                    ];
+                });
+
+            $jumlahBelumDibaca = $notifikasi->where('status_baca', false)->count();
+
+            return response()->json([
+                'success'             => true,
+                'data'                => $notifikasi,
+                'jumlah_belum_dibaca' => $jumlahBelumDibaca,
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('[NOTIF] Gagal ambil list notifikasi', ['message' => $e->getMessage()]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil notifikasi',
+            ], 500);
+        }
+    }
+
+    // =========================================================
+    // 🔥 TANDAI NOTIFIKASI SUDAH DIBACA
+    // =========================================================
+    public function bacaNotifikasi(Request $request, $id)
+    {
+        try {
+            $user = $request->user();
+
+            $notif = \App\Models\Notifikasi::where('id_notif', $id)
+                ->where('id_user', $user->id_user)
+                ->first();
+
+            if (!$notif) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Notifikasi tidak ditemukan',
+                ], 404);
+            }
+
+            $notif->status_baca = true;
+            $notif->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Notifikasi ditandai sudah dibaca',
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    // =========================================================
+    // 🔥 TANDAI SEMUA NOTIFIKASI SUDAH DIBACA
+    // =========================================================
+    public function bacaSemuaNotifikasi(Request $request)
+    {
+        try {
+            $user = $request->user();
+
+            \App\Models\Notifikasi::where('id_user', $user->id_user)
+                ->where('status_baca', false)
+                ->update(['status_baca' => true]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Semua notifikasi ditandai sudah dibaca',
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
 }
