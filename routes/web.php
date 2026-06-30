@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\PenilaianController;
 use App\Http\Controllers\CatatanOrangTuaController;
+use App\Http\Controllers\LaporanController;
 
 // 🔥 HALAMAN AWAL (langsung ke login)
 Route::get('/', function () {
@@ -194,3 +195,14 @@ Route::get(
     '/catatan-anak-rumah/{id}',
     [CatatanOrangTuaController::class, 'show']
 )->name('catatan.show');
+
+// Laporan PDF — hanya bisa diakses oleh yang sudah login
+Route::middleware('auth')->group(function () {
+    Route::get('/laporan/perkembangan/{id_anak}/{minggu}',
+        [LaporanController::class, 'laporanPerkembangan']
+    )->name('laporan.perkembangan');
+
+    Route::get('/laporan/analisis/{id_anak}/{minggu}',
+        [LaporanController::class, 'laporanAnalisis']
+    )->name('laporan.analisis');
+});

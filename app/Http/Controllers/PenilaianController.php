@@ -203,9 +203,24 @@ class PenilaianController extends Controller
         $tema  = $penilaian->first()?->rpph?->tema          ?? '-';
         $topik = $penilaian->first()?->rpph?->topik_harian  ?? '-';
 
+        // ── KODE BARU TAMBAHAN: AMBIL STATUS & REKOMENDASI AI DARI DATABASE ──
+        // 1. Cek apakah ada record hasil analisis untuk anak ini di minggu representatif terkait
+        $idRpphRepresentatif = $penilaian->first()?->id_rpph;
+        
+        $hasilAnalisisRow = HasilAnalisis::where('id_anak', $id_anak)
+            ->where('id_rpph', $idRpphRepresentatif)
+            ->first();
+
+        // 2. Set boolean status_analisis (Sinkron dengan halaman index perkembangan-anak)
+        $status_analisis = $hasilAnalisisRow ? true : false;
+
+        // 3. Ambil teks rekomendasi AI murni untuk dipakai di kotak dinamis detail
+        $rekomendasiAI = $hasilAnalisisRow ? $hasilAnalisisRow->rekomendasi_ai : null;
+
+        // Kirim variabel 'status_analisis' dan 'rekomendasiAI' ke dalam compact view
         return view('detail-perkembangan', compact(
-            'guru', 'anak', 'penilaian',
-            'perAspek', 'minggu', 'tema', 'topik'
+            'guru', 'anak', 'penilaian', 'perAspek', 
+            'minggu', 'tema', 'topik', 'status_analisis', 'rekomendasiAI'
         ));
     }
 

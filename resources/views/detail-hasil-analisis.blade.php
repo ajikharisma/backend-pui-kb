@@ -375,9 +375,11 @@
                     <a href="/hasil-analisis" class="btn-back">
                         <i class="bi bi-arrow-left"></i> Kembali
                     </a>
-                    <button class="btn-cetak" onclick="window.print()">
-                        <i class="bi bi-printer"></i> Cetak Laporan
-                    </button>
+                    <a href="{{ route('laporan.analisis', ['id_anak' => $anak->id_anak, 'minggu' => $minggu]) }}"
+                        class="btn-cetak"
+                        download="Laporan-Analisis-{{ Str::slug($anak->nama_anak) }}-Minggu{{ $minggu }}.pdf">
+                        <i class="bi bi-printer"></i> Cetak Laporan Analisis
+                    </a>
                 </div>
             </div>
 

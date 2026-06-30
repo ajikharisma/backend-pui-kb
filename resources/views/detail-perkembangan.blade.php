@@ -248,14 +248,45 @@
             background: #005569;
         }
 
-        .btn-kembali{
+        .btn-kembali {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             background: white;
             border: 1px solid #CBD5E1;
-            padding: 12px 22px;
-            border-radius: 14px;
+            padding: 10px 20px;
+            border-radius: 12px;
             text-decoration: none;
             color: #334155;
             font-weight: 700;
+            font-size: 14px;
+            transition: .2s;
+        }
+
+        .btn-kembali:hover {
+            background: #F8FAFC;
+            color: #0F172A;
+        }
+
+        .btn-cetak {
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px;
+            background: #0F766E; 
+            border: none;
+            color: white; 
+            padding: 10px 20px;
+            border-radius: 12px; 
+            font-weight: 700; 
+            font-size: 14px;
+            text-decoration: none; 
+            transition: .2s; 
+            cursor: pointer;
+        }
+
+        .btn-cetak:hover { 
+            background: #115E59; 
+            color: white; 
         }
 
         .profile-wrapper{
@@ -288,6 +319,14 @@
             overflow-wrap: break-word;
         }
 
+        /* ── TAMBAHKAN CSS INI DI BAGIAN UTAMA STYLE ── */
+        .btn-analisis:disabled {
+            background: #CBD5E1 !important;
+            color: #64748B !important;
+            cursor: not-allowed !important;
+            opacity: 1 !important;
+        }
+
         @media(max-width:992px){
 
             .sidebar{
@@ -312,10 +351,24 @@
                 height: 38px;
             }
 
-            .btn-kembali{
-                width: 50%;
-                text-align: center;
-                order: -1; /* Membuat tombol kembali berada di paling atas saat di HP */
+            .btn-kembali {
+                width: 50% !important;
+                justify-content: flex-start !important;
+                order: 2 !important;
+            }
+
+            .btn-cetak {
+                width: 50% !important;
+                justify-content: flex-start !important;
+                order: 1 !important;
+            }
+
+            .button-group-header {
+                width: 100% !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 8px !important;
             }
 
             .content{
@@ -372,23 +425,33 @@
                 border: none !important;
             }
 
-            /* Beri penanda teks sebelum data tampil di HP */
+            /* ── GANTI SEKSI INI AGAR KOLOM DESKRIPSI DI HP MUNCUL ── */
             .table-custom td:nth-child(1)::before { content: "Tanggal: "; font-weight: 700; color: #64748B; }
             .table-custom td:nth-child(2)::before { content: "Topik: "; font-weight: 700; color: #64748B; }
             .table-custom td:nth-child(3)::before { content: "Aspek: "; font-weight: 700; color: #64748B; }
             .table-custom td:nth-child(4)::before { content: "Capaian: "; font-weight: 700; color: #64748B; }
+            .table-custom td:nth-child(5)::before { content: "Deskripsi: "; font-weight: 700; color: #64748B; }
+            
             .table-custom td:nth-child(5) { 
                 border-top: 1px dashed #E2E8F0 !important; 
                 padding-top: 8px !important; 
                 margin-top: 4px;
             }
 
-            .ai-box{
-                padding: 30px 16px;
+            .ai-box {
+                padding: 30px 16px !important;
             }
 
-            .btn-analisis{
-                width: 100%;
+            .btn-analisis {
+                width: 100% !important;
+            }
+
+            .btn-analisis:disabled {
+                background: #CBD5E1 !important;
+                color: #64748B !important;
+                cursor: not-allowed !important;
+                opacity: 1 !important;
+                border: none !important;
             }
 
             h1{ font-size: 1.5rem; }
@@ -437,7 +500,6 @@
 
         </div>
 
-        <!-- MENU -->
         <div class="sidebar-menu">
 
             <a href="/dashboard" class="nav-link-custom">
@@ -493,7 +555,6 @@
     {{-- MAIN --}}
     <div class="main-content flex-grow-1">
 
-        <!-- TOPBAR (Sudah Konsisten & Responsif Pas dengan Dashboard Utama) -->
         <header class="topbar d-flex justify-content-between align-items-center">
 
             <div>
@@ -567,12 +628,21 @@
 
                 </div>
 
-                <a href="/perkembangan-anak" class="btn-kembali text-decoration-none">
+                <div class="d-flex gap-2 align-items-center button-group-header">
+                    
+                    <a href="{{ route('laporan.perkembangan', ['id_anak' => $anak->id_anak, 'minggu' => $minggu]) }}"
+                    target="_blank"
+                    class="btn-cetak">
+                        <i class="bi bi-printer"></i> 
+                        Cetak Laporan Perkembangan
+                    </a>
 
-                    <i class="bi bi-arrow-left me-2"></i>
-                    Kembali
+                    <a href="/perkembangan-anak" class="btn-kembali">
+                        <i class="bi bi-arrow-left"></i>
+                        Kembali
+                    </a>
 
-                </a>
+                </div>
 
             </div>
 
@@ -728,63 +798,64 @@
 
             </div>
 
-            {{-- AI BOX --}}
+            {{-- ── KOTAK AI BOX DINAMIS SINKRON TOTAL ── --}}
             <div class="ai-box">
 
                 <div class="mb-3">
-
-                    <span class="badge text-bg-secondary px-4 py-2 rounded-pill">
-
-                        Status Analisis :
-                        Belum Diproses
-
-                    </span>
-
+                    @if(isset($status_analisis) && $status_analisis)
+                        <span class="badge text-bg-success px-4 py-2 rounded-pill fw-bold" style="background-color: #DCFCE7 !important; color: #15803D !important;">
+                            <i class="bi bi-check-circle-fill me-1"></i> Status Analisis : Sudah Diproses
+                        </span>
+                    @else
+                        <span class="badge text-bg-secondary px-4 py-2 rounded-pill">
+                            Status Analisis : Belum Diproses
+                        </span>
+                    @endif
                 </div>
 
-                <p class="text-muted mb-4">
+                @if(isset($status_analisis) && $status_analisis)
+                    <p class="text-muted mb-4">
+                        Analisis data mingguan anak telah selesai diproses. Anda dapat melihat hasil lengkapnya pada menu Hasil Analisis.
+                    </p>
+                @else
+                    <p class="text-muted mb-4">
+                        Gunakan AI untuk menganalisis perkembangan anak berdasarkan data mingguan.
+                    </p>
+                @endif
 
-                    Gunakan AI untuk menganalisis perkembangan anak
-                    berdasarkan data mingguan.
-
-                </p>
-
-                <form 
-                    action="{{ route('proses-analisis', [
-                        'id_anak' => $anak->id_anak,
-                        'minggu'  => $minggu
-                    ]) }}" 
+                <form action="{{ route('proses-analisis', ['id_anak' => $anak->id_anak, 'minggu' => $minggu]) }}" 
                     method="POST"
                     onsubmit="loadingAnalisis(this)">
-
                     @csrf
-
-                    <button type="submit" id="btnAnalisis" class="btn-analisis">
-                        <span id="iconAnalisis">🔥</span>
-                        <span id="labelAnalisis">Proses Analisis AI</span>
+                    
+                    <button type="submit" id="btnAnalisis" class="btn-analisis" @if(isset($status_analisis) && $status_analisis) disabled @endif>
+                        @if(isset($status_analisis) && $status_analisis)
+                            <i class="bi bi-lock-fill me-1"></i> Analisis Selesai (Disabled)
+                        @else
+                            <span id="iconAnalisis">🔥</span>
+                            <span id="labelAnalisis">Proses Analisis AI</span>
+                        @endif
                     </button>
-
                 </form>
 
-                <script>
-                function loadingAnalisis(form) {
-                    const icon  = document.getElementById('iconAnalisis');
-                    const label = document.getElementById('labelAnalisis');
-                    const btn   = document.getElementById('btnAnalisis');
-
-                    // Ubah tampilan tombol
-                    btn.disabled          = true;
-                    btn.style.opacity     = '0.7';
-                    btn.style.cursor      = 'not-allowed';
-                    icon.textContent      = '⏳';
-                    label.textContent     = 'Sedang menganalisis... mohon tunggu';
-
-                    // Biarkan form submit berjalan normal
-                    return true;
-                }
-                </script>
-
             </div>
+
+            {{-- Script Loading Tetap Dipertahankan Sesuai Aslinya ── --}}
+            <script>
+            function loadingAnalisis(form) {
+                const icon  = document.getElementById('iconAnalisis');
+                const label = document.getElementById('labelAnalisis');
+                const btn   = document.getElementById('btnAnalisis');
+
+                btn.disabled          = true;
+                btn.style.opacity     = '0.7';
+                btn.style.cursor      = 'not-allowed';
+                if(icon) icon.textContent = '⏳';
+                if(label) label.textContent = 'Sedang menganalisis... mohon tunggu';
+
+                return true;
+            }
+            </script>
 
         </div>
 
