@@ -711,18 +711,6 @@
 
                     </button>
 
-                    <!-- SEARCH -->
-                    <div class="search-wrapper">
-
-                        <i class="bi bi-search"></i>
-
-                        <input
-                            type="text"
-                            class="search-input"
-                            placeholder="Cari nama murid...">
-
-                    </div>
-
                 </div>
 
                 <!-- RIGHT PROFILE -->
@@ -922,13 +910,8 @@
 
                         <div class="mb-5">
                             <label class="form-label">Catatan Guru (Opsional)</label>
-                            <textarea
-                                name="deskripsi"
-                                id="catatanGuru"
-                                rows="4"
-                                class="form-control-custom"
-                                placeholder="Contoh: Anak mampu menghitung angka 1-10 tanpa bantuan">
-                            </textarea>
+                            {{-- Rapatkan tag pembuka dan penutup dalam satu baris seperti di bawah ini --}}
+                            <textarea name="deskripsi" id="catatanGuru" rows="4" class="form-control-custom" placeholder="Contoh: Anak mampu menghitung angka 1-10 tanpa bantuan"></textarea>
                         </div>
 
                         <div id="alertBox"></div>

@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\CatatanOrangTua;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Guru;
 
 class CatatanOrangTuaController extends Controller
 {
     public function index()
     {
+        $guru = Guru::where('id_user', Auth::id())->first();
+
         $catatan = CatatanOrangTua::with([
             'anak',
             'orangTua.user'
@@ -19,7 +23,8 @@ class CatatanOrangTuaController extends Controller
 
         return view('catatan-anak-rumah', compact(
             'catatan',
-            'totalCatatan'
+            'totalCatatan',
+            'guru'
         ));
     }
 
@@ -36,6 +41,8 @@ class CatatanOrangTuaController extends Controller
             ]);
         }
 
-        return view('detail-catatan-anak-rumah', compact('catatan'));
+        $guru = Guru::where('id_user', Auth::id())->first();
+
+        return view('detail-catatan-anak-rumah', compact('catatan', 'guru'));
     }
 }   

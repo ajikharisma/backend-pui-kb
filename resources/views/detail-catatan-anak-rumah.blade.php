@@ -322,10 +322,14 @@
                     </small>
                 </div>
 
-                @if(isset($guru) && $guru->foto)
-                    <img src="{{ asset('storage/' . $guru->foto) }}" class="profile-img">
+                @if($guru && $guru->foto)
+                <img
+                    src="{{ asset('storage/' . $guru->foto) }}"
+                    class="profile-img">
                 @else
-                    <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->nama) }}&background=0ea5e9&color=fff" class="profile-img">
+                <img
+                    src="https://ui-avatars.com/api/?name=Guru&background=0ea5e9&color=fff"
+                    class="profile-img">
                 @endif
             </div>
         </header>

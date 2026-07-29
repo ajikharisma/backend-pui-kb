@@ -547,49 +547,65 @@ class PenilaianController extends Controller
     // HALAMAN LIST HASIL ANALISIS
     // =========================================================
 
-    public function hasilAnalisis()
+    public function hasilAnalisis(Request $request) // ← 1. Tambahkan parameter Request di sini
     {
         $guru = Auth::user()->guru;
 
-        // 1. Ambil data mentah hasil analisis aspek berdasarkan kelompok guru
-        $semuaHasil = HasilAnalisis::with(['anak', 'rpph', 'aspek'])
+        // 2. Ubah menjadi Query Builder awal (jangan langsung di-get())
+        $query = HasilAnalisis::with(['anak', 'rpph', 'aspek'])
             ->whereHas('anak', function ($q) use ($guru) {
                 $q->where('kelompok', $guru->kelompok);
-            })
-            ->get();
+            });
 
-        // 2. Kelompokkan berdasarkan Kombinasi ID Anak dan Minggu
+        // 3. TAMBAHAN FITUR: Filter Cari Nama Anak
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('anak', function ($q) use ($search) {
+                $q->where('nama_anak', 'like', '%' . $search . '%');
+            });
+        }
+
+        // 4. TAMBAHAN FITUR: Filter Berdasarkan Minggu
+        if ($request->filled('minggu')) {
+            $query->whereHas('rpph', function ($q) use ($request) {
+                $q->where('minggu', $request->minggu);
+            });
+        }
+
+        // 5. TAMBAHAN FITUR: Filter Berdasarkan Status Dominan
+        if ($request->filled('status')) {
+            $query->where('nilai_dominan', $request->status);
+        }
+
+        // 6. Baru jalankan get() setelah semua filter terpasang
+        $semuaHasil = $query->get();
+
+        // 7. Kelompokkan berdasarkan Kombinasi ID Anak dan Minggu (Tetap sama seperti logika lamamu)
         $grouped = $semuaHasil->groupBy(function ($item) {
             return $item->id_anak . '-' . ($item->rpph->minggu ?? '0');
         });
 
-        // 3. Lakukan mapping menggunakan method put() agar Collection menerima custom key
+        // 8. Lakukan mapping menggunakan method put() agar Collection menerima custom key
         $hasil = $grouped->map(function ($items) {
-            // Kumpulkan semua nilai dominan dari aspek-aspek anak ini di minggu tersebut
             $semuaDominan = $items->pluck('nilai_dominan')->toArray();
             
-            // Hitung distribusi kemunculan nilai (BB, MB, BSH, BSB)
             $distribusi = array_count_values($semuaDominan);
             $distribusi = array_merge(
                 ['BB' => 0, 'MB' => 0, 'BSH' => 0, 'BSB' => 0],
                 $distribusi
             );
 
-            // Cari nilai dengan frekuensi tertinggi (Dominan)
             $maxVal = max($distribusi);
             $seri   = array_keys(array_filter($distribusi, fn($v) => $v === $maxVal));
 
-            // Aturan tiebreaker jika ada jumlah nilai aspek yang sama (ambil yang paling rendah)
             $prioritas = ['BB' => 1, 'MB' => 2, 'BSH' => 3, 'BSB' => 4];
             usort($seri, fn($a, $b) => $prioritas[$a] - $prioritas[$b]);
             $dominanGlobal = $seri[0];
 
-            // Rule Pengondisian Aturan: Jika ada aspek bernilai BB, global dikunci maksimal MB
             if (in_array('BB', $semuaDominan) && $prioritas[$dominanGlobal] > 2) {
                 $dominanGlobal = 'MB';
             }
 
-            // Konversi Kode Singkatan ke Teks Status Resmi Indonesia
             $statusMap = [
                 'BB'  => 'Belum Berkembang',
                 'MB'  => 'Mulai Berkembang',
@@ -597,7 +613,6 @@ class PenilaianController extends Controller
                 'BSB' => 'Berkembang Sangat Baik',
             ];
 
-            // 🔥 PERBAIKAN: Gunakan put() untuk memasukkan data custom ke dalam objek Collection secara aman
             $items->put('status_global', $statusMap[$dominanGlobal]);
             $items->put('nilai_dominan_global', $dominanGlobal);
 
@@ -693,6 +708,140 @@ class PenilaianController extends Controller
         ->get();
 
         return response()->json($penilaian);
+    }
+
+    // =========================================================
+    // METHOD KHUSUS UNTUK SCHEDULER OTOMATIS
+    // =========================================================
+    public function prosesAnalisisOtomatis(string $id_anak, string $minggu)
+    {
+        set_time_limit(300);
+
+        $anak     = \App\Models\Anak::findOrFail($id_anak);
+        $rpphList = \App\Models\Rpph::where('minggu', $minggu)->get();
+
+        if ($rpphList->isEmpty()) {
+            throw new \Exception("RPPH minggu {$minggu} tidak ditemukan");
+        }
+
+        $rpphIds           = $rpphList->pluck('id_rpph')->toArray();
+        $rpphRepresentatif = $rpphList->first()->id_rpph;
+        $rpphObj           = $rpphList->first();
+
+        $penilaian = \App\Models\Penilaian::with(['indikator.aspek', 'rpph'])
+            ->where('id_anak', $id_anak)
+            ->whereIn('id_rpph', $rpphIds)
+            ->get();
+
+        if ($penilaian->isEmpty()) {
+            throw new \Exception("Tidak ada penilaian untuk anak {$anak->nama_anak} minggu {$minggu}");
+        }
+
+        $periode       = $penilaian->first()->periode;
+        $tema          = $rpphObj->tema;
+        $groupAspek    = $penilaian->groupBy(fn($item) => $item->indikator->aspek->id_aspek);
+        $hasilAnalisis = [];
+
+        foreach ($groupAspek as $idAspek => $items) {
+            $namaAspek  = $items->first()->indikator->aspek->nama_aspek;
+            $distribusi = ['BB' => 0, 'MB' => 0, 'BSH' => 0, 'BSB' => 0];
+
+            foreach ($items as $item) {
+                $distribusi[$item->nilai]++;
+            }
+
+            $total      = array_sum($distribusi);
+            $dominan    = $this->cariDominan($distribusi);
+            $confidence = round(($distribusi[$dominan] / $total) * 100, 1);
+            $reliable   = $total >= 3;
+            $status     = $this->prosesRBS($dominan);
+
+            $indikatorLemah = $items
+                ->filter(fn($p) => in_array($p->nilai, ['BB', 'MB']))
+                ->map(fn($p) => [
+                    'id'    => $p->indikator->id_indikator,
+                    'nama'  => $p->indikator->nama_indikator,
+                    'nilai' => $p->nilai,
+                ])
+                ->unique('id')
+                ->values()
+                ->toArray();
+
+            $existing = \App\Models\HasilAnalisis::where('id_anak', $id_anak)
+                ->where('id_rpph', $rpphRepresentatif)
+                ->where('id_aspek', $idAspek)
+                ->first();
+
+            if (!$existing) {
+                $lastId    = \App\Models\HasilAnalisis::orderByDesc('id_hasil')->value('id_hasil');
+                $newNumber = $lastId ? (intval(substr($lastId, 3)) + 1) : 1;
+                $newId     = 'HSL' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+            } else {
+                $newId = $existing->id_hasil;
+            }
+
+            \App\Models\HasilAnalisis::updateOrCreate(
+                [
+                    'id_anak'  => $id_anak,
+                    'id_rpph'  => $rpphRepresentatif,
+                    'id_aspek' => $idAspek,
+                ],
+                [
+                    'id_hasil'            => $newId,
+                    'nilai_dominan'       => $dominan,
+                    'status_perkembangan' => $status,
+                    'jumlah_bb'           => $distribusi['BB'],
+                    'jumlah_mb'           => $distribusi['MB'],
+                    'jumlah_bsh'          => $distribusi['BSH'],
+                    'jumlah_bsb'          => $distribusi['BSB'],
+                    'total_penilaian'     => $total,
+                    'confidence'          => $confidence,
+                    'indikator_lemah'     => json_encode($indikatorLemah),
+                    'periode'             => $periode,
+                    'tanggal_analisis'    => now()->toDateString(),
+                    'rekomendasi_ai'      => null,
+                    'ai_generated'        => false,
+                ]
+            );
+
+            $hasilAnalisis[] = [
+                'aspek'           => $namaAspek,
+                'distribusi'      => $distribusi,
+                'total'           => $total,
+                'dominan'         => $dominan,
+                'confidence'      => $confidence,
+                'reliable'        => $reliable,
+                'status'          => $status,
+                'indikator_lemah' => $indikatorLemah,
+            ];
+        }
+
+        // Panggil Gemini AI
+        $konteksLLM    = $this->buildKonteksLLM($anak, $rpphObj, $hasilAnalisis, $periode);
+        $gemini        = new \App\Services\GeminiService();
+        $prompt        = $gemini->susunPrompt($konteksLLM);
+        $rekomendasiAI = $gemini->generate($prompt);
+
+        // Fallback kalau Gemini gagal
+        if (!$rekomendasiAI) {
+            $rekomendasiAI = collect($hasilAnalisis)
+                ->map(function ($h) {
+                    $teks = $this->generateRekomendasi(
+                        $h['status'], $h['aspek'], $h['indikator_lemah']
+                    );
+                    return "**{$h['aspek']}**\n{$teks}";
+                })
+                ->implode("\n\n");
+        }
+
+        // Simpan rekomendasi AI
+        \App\Models\HasilAnalisis::where('id_anak', $id_anak)
+            ->where('id_rpph', $rpphRepresentatif)
+            ->update([
+                'rekomendasi_ai'  => $rekomendasiAI,
+                'ai_generated'    => true,
+                'ai_generated_at' => now(),
+            ]);
     }
 
 }

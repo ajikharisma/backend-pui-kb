@@ -167,6 +167,15 @@ class GeminiService
                 Log::info('[GEMINI FULL TEXT]');
                 Log::info($teks);
 
+                // ← TAMBAH INI: deteksi teks terpotong
+                $finishReason = $response->json('candidates.0.finishReason');
+                Log::info('[GEMINI] finishReason: ' . ($finishReason ?? 'null'));
+
+                if ($finishReason === 'MAX_TOKENS') {
+                    Log::warning('[GEMINI] Teks terpotong karena batas token, dianggap gagal → retry');
+                    throw new \Exception("Output Gemini terpotong (MAX_TOKENS)");
+                }
+
                 if (!$teks) {
                     Log::error('[GEMINI] Teks kosong. Response: ' . substr($response->body(), 0, 300));
                     throw new \Exception("Response Gemini tidak mengandung teks");

@@ -579,13 +579,13 @@
                         <small class="text-muted">{{ auth()->user()->nama }}</small>
                     </div>
                 </div>
-                @if(isset($guru) && $guru->foto)
+                @if($guru && $guru->foto)
                 <img
                     src="{{ asset('storage/' . $guru->foto) }}"
                     class="profile-img">
                 @else
                 <img
-                    src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->nama) }}&background=0ea5e9&color=fff"
+                    src="https://ui-avatars.com/api/?name=Guru&background=0ea5e9&color=fff"
                     class="profile-img">
                 @endif
             </div>
