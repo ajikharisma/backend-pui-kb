@@ -269,25 +269,29 @@
         </div>
 
         <div class="sidebar-menu">
-            <a href="/dashboard" class="nav-link-custom">
+            <a href="/dashboard" class="nav-link-custom {{ request()->is('dashboard*') ? 'active' : '' }}">
                 <i class="bi bi-grid"></i> Beranda
             </a>
-            <a href="/data-murid" class="nav-link-custom">
+            <a href="/data-murid" class="nav-link-custom {{ request()->is('data-murid*') ? 'active' : '' }}">
                 <i class="bi bi-people"></i> Data Murid
             </a>
-            <a href="/input-penilaian" class="nav-link-custom">
+            <a href="{{ route('penilaian.create') }}" class="nav-link-custom {{ request()->routeIs('penilaian.*') ? 'active' : '' }}">
                 <i class="bi bi-journal-text"></i> Input Data Perkembangan
             </a>
-            <a href="/perkembangan-anak" class="nav-link-custom">
+            <a href="/perkembangan-anak" class="nav-link-custom {{ request()->is('perkembangan-anak*') ? 'active' : '' }}">
                 <i class="bi bi-bar-chart"></i> Perkembangan Anak
             </a>
-            <a href="/hasil-analisis" class="nav-link-custom">
+            <a href="/hasil-analisis" class="nav-link-custom {{ request()->is('hasil-analisis*') ? 'active' : '' }}">
                 <i class="bi bi-file-earmark-text"></i> Hasil Analisis
             </a>
-            <a href="/catatan-anak-rumah" class="nav-link-custom active">
+            <a href="/catatan-anak-rumah" class="nav-link-custom {{ request()->is('catatan-anak-rumah*') ? 'active' : '' }}">
                 <i class="bi bi-book"></i> Catatan Anak Dirumah
             </a>
-            <a href="/profil-guru" class="nav-link-custom">
+            <!-- Menu Generate Rapor -->
+            <a href="{{ route('rapor.index') }}" class="nav-link-custom {{ request()->routeIs('rapor.*') ? 'active' : '' }}">
+                <i class="bi bi-award"></i> Generate Rapor
+            </a>
+            <a href="/profil-guru" class="nav-link-custom {{ request()->is('profil-guru*') ? 'active' : '' }}">
                 <i class="bi bi-person-badge"></i> Profil Guru
             </a>
 
