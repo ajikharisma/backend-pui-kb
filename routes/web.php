@@ -12,6 +12,7 @@ use App\Http\Controllers\GuruController;
 use App\Http\Controllers\PenilaianController;
 use App\Http\Controllers\CatatanOrangTuaController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\RaporController;
 
 // 🔥 HALAMAN AWAL (langsung ke login)
 Route::get('/', function () {
@@ -205,4 +206,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/analisis/{id_anak}/{minggu}',
         [LaporanController::class, 'laporanAnalisis']
     )->name('laporan.analisis');
+});
+
+// Generate Rapor
+Route::middleware('auth')->prefix('rapor')->name('rapor.')->group(function () {
+    Route::get('/',                    [RaporController::class, 'index'])->name('index');
+    Route::get('/list',                [RaporController::class, 'list'])->name('list');
+    Route::post('/generate',           [RaporController::class, 'generate'])->name('generate');
+    Route::post('/simpan/{id_rapor}',  [RaporController::class, 'simpan'])->name('simpan');
+    Route::get('/download/{id_rapor}', [RaporController::class, 'download'])->name('download');
 });
