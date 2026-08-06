@@ -219,61 +219,61 @@ Route::middleware('auth')->prefix('rapor')->name('rapor.')->group(function () {
 
 
 // ROUTE SEMENTARA UNTUK PREVIEW TEMPLATE CETAK RAPOR
-Route::get('/preview-rapor', function () {
-    // 1. Buat Data Dummy Anak
-    $anak = (object)[
-        'nama_anak' => 'Ahmad Raihan',
-        'kelompok' => 'A',
-        'tempat_lahir' => 'Bintan',
-        'tanggal_lahir' => '2021-05-12',
-        'foto' => null, // Set null atau path foto jika ada
-        'orangTua' => (object)[
-            'user' => (object)[
-                'nama' => 'Budi Santoso'
-            ]
-        ]
-    ];
+// Route::get('/preview-rapor', function () {
+//     // 1. Buat Data Dummy Anak
+//     $anak = (object)[
+//         'nama_anak' => 'Ahmad Raihan',
+//         'kelompok' => 'A',
+//         'tempat_lahir' => 'Bintan',
+//         'tanggal_lahir' => '2021-05-12',
+//         'foto' => null, // Set null atau path foto jika ada
+//         'orangTua' => (object)[
+//             'user' => (object)[
+//                 'nama' => 'Budi Santoso'
+//             ]
+//         ]
+//     ];
 
-    // 2. Buat Data Dummy Rapor (Termasuk Narasi AI)
-    $rapor = (object)[
-        'tahun_ajaran' => '2025/2026',
-        'semester' => 'Semester Genap 2025/2026',
-        'fase' => 'Fase Fondasi',
-        'tinggi_badan' => '98',
-        'berat_badan' => '15',
-        'lingkar_kepala' => '50',
-        'hadir' => 85,
-        'sakit' => 2,
-        'izin' => 1,
-        'tanpa_keterangan' => 0,
+//     // 2. Buat Data Dummy Rapor (Termasuk Narasi AI)
+//     $rapor = (object)[
+//         'tahun_ajaran' => '2025/2026',
+//         'semester' => 'Semester Genap 2025/2026',
+//         'fase' => 'Fase Fondasi',
+//         'tinggi_badan' => '98',
+//         'berat_badan' => '15',
+//         'lingkar_kepala' => '50',
+//         'hadir' => 85,
+//         'sakit' => 2,
+//         'izin' => 1,
+//         'tanpa_keterangan' => 0,
 
-        // Narasi Dummy NABP
-        'narasi_nabp_1' => 'Ahmad menunjukkan sikap percaya kepada Tuhan YME dan mulai terbiasa berdoa sebelum dan sesudah kegiatan.',
-        'narasi_nabp_2' => 'Anak aktif mencuci tangan sendiri sebelum makan dan menjaga kebersihan diri.',
-        'narasi_nabp_3' => 'Anak mau berbagi mainan dengan teman-teman di kelas dan bersikap sopan.',
-        'narasi_nabp_4' => 'Anak menunjukkan rasa sayang pada tanaman sekolah dengan membantu menyiramnya.',
+//         // Narasi Dummy NABP
+//         'narasi_nabp_1' => 'Ahmad menunjukkan sikap percaya kepada Tuhan YME dan mulai terbiasa berdoa sebelum dan sesudah kegiatan.',
+//         'narasi_nabp_2' => 'Anak aktif mencuci tangan sendiri sebelum makan dan menjaga kebersihan diri.',
+//         'narasi_nabp_3' => 'Anak mau berbagi mainan dengan teman-teman di kelas dan bersikap sopan.',
+//         'narasi_nabp_4' => 'Anak menunjukkan rasa sayang pada tanaman sekolah dengan membantu menyiramnya.',
 
-        // Narasi Dummy JD
-        'narasi_jd_1' => 'Ahmad dapat mengekspresikan emosi senangnya dan mulai mampu mengendalikan emosi saat mengantre.',
-        'narasi_jd_2' => 'Anak mengenali dirinya sebagai laki-laki dan bangga dengan karya yang dibuatnya.',
-        'narasi_jd_3' => 'Anak mengenali simbol-simbol budaya dan menyanyikan lagu nasional dengan penuh semangat.',
-        'narasi_jd_4' => 'Anak memiliki koordinasi motorik kasar yang baik saat melompat dan berlari di halaman.',
+//         // Narasi Dummy JD
+//         'narasi_jd_1' => 'Ahmad dapat mengekspresikan emosi senangnya dan mulai mampu mengendalikan emosi saat mengantre.',
+//         'narasi_jd_2' => 'Anak mengenali dirinya sebagai laki-laki dan bangga dengan karya yang dibuatnya.',
+//         'narasi_jd_3' => 'Anak mengenali simbol-simbol budaya dan menyanyikan lagu nasional dengan penuh semangat.',
+//         'narasi_jd_4' => 'Anak memiliki koordinasi motorik kasar yang baik saat melompat dan berlari di halaman.',
 
-        // Narasi Dummy LMSTRS
-        'narasi_lmstrs_1' => 'Ahmad mampu menceritakan kembali pengalaman mainnya dengan kalimat sederhana.',
-        'narasi_lmstrs_2' => 'Anak antusias mendengarkan cerita dan dapat memegang pensil dengan posisi yang benar.',
-        'narasi_lmstrs_3' => 'Anak dapat membilang angka 1-10 dan mengelompokkan benda berdasarkan warna.',
-        'narasi_lmstrs_4' => 'Anak mampu menyelesaikan puzzle 12 keping secara mandiri.',
-        'narasi_lmstrs_5' => 'Anak menunjukkan rasa ingin tahu tinggi saat melakukan eksperimen mencampur warna.',
-        'narasi_lmstrs_6' => 'Anak mengenal penggunaan alat-alat digital sederhana di sekitar dengan bimbingan.',
-        'narasi_lmstrs_7' => 'Anak mewarnai gambar dengan rapi dan berani mengekspresikan imajinasinya dalam menggambar.'
-    ];
+//         // Narasi Dummy LMSTRS
+//         'narasi_lmstrs_1' => 'Ahmad mampu menceritakan kembali pengalaman mainnya dengan kalimat sederhana.',
+//         'narasi_lmstrs_2' => 'Anak antusias mendengarkan cerita dan dapat memegang pensil dengan posisi yang benar.',
+//         'narasi_lmstrs_3' => 'Anak dapat membilang angka 1-10 dan mengelompokkan benda berdasarkan warna.',
+//         'narasi_lmstrs_4' => 'Anak mampu menyelesaikan puzzle 12 keping secara mandiri.',
+//         'narasi_lmstrs_5' => 'Anak menunjukkan rasa ingin tahu tinggi saat melakukan eksperimen mencampur warna.',
+//         'narasi_lmstrs_6' => 'Anak mengenal penggunaan alat-alat digital sederhana di sekitar dengan bimbingan.',
+//         'narasi_lmstrs_7' => 'Anak mewarnai gambar dengan rapi dan berani mengekspresikan imajinasinya dalam menggambar.'
+//     ];
 
-    // 3. Render langsung view Blade
-    return view('rapor.cetak', [
-        'anak' => $anak,
-        'rapor' => $rapor,
-        'guru' => 'Siti Aminah, S.Pd',
-        'nama_sekolah' => 'KB NURUL AIN'
-    ]);
-});
+//     // 3. Render langsung view Blade
+//     return view('rapor.cetak', [
+//         'anak' => $anak,
+//         'rapor' => $rapor,
+//         'guru' => 'Siti Aminah, S.Pd',
+//         'nama_sekolah' => 'KB NURUL AIN'
+//     ]);
+// });
